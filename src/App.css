@@ -30,7 +30,7 @@ body {
   border-left: 4px solid transparent;
 }
 
-.property.common {
+.property.standard {
   border-color: green;
   background: #f0fff0;
 }
@@ -76,6 +76,12 @@ body {
   padding-left: 0;
 }
 
+.toc li ul {
+  padding-left: 1rem;
+  border-left: 2px solid #eee;
+  margin-top: 0.25rem;
+}
+
 .toc a {
   text-decoration: none;
   color: #007acc;
@@ -83,4 +89,61 @@ body {
 
 .toc a:hover {
   text-decoration: underline;
+}
+
+.tabs {
+  margin-top: 2rem;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tab-buttons button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  background: #eee;
+  cursor: pointer;
+}
+
+.tab-buttons .active {
+  background: #007acc;
+  color: white;
+  border-color: #007acc;
+}
+
+.tab-content {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  background: #fafafa;
+}
+
+table {
+  border-collapse: separate; /* so margins/padding work as expected */
+  border-spacing: 8px 4px;   /* horizontal and vertical spacing between cells */
+  width: 100%;
+  border: 1px solid #ccc;
+}
+
+th, td {
+  padding: 8px 12px;         /* space inside cells */
+  text-align: left;
+  vertical-align: middle;
+  border: 1px solid #ddd;    /* optional subtle border */
+}
+
+thead tr {
+  background-color: #f0f0f0; /* light gray background for header row */
+  font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fafafa; /* very subtle stripe on even rows */
+}
+
+.right-align {
+  text-align: right;
 }
