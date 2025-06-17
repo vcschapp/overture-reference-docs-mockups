@@ -15,7 +15,7 @@ function ResizeMap() {
   return null;
 }
 
-export default function MapCard({ title, center, footprint, selected, onClick }) {
+export function MapCard({ title, center, footprint, selected, onClick }) {
   const cardClass = `card ${selected ? "selected" : "dimmed"}`;
 
   return (

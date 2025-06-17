@@ -1,0 +1,29 @@
+.detail-table {
+    width: 100%;
+    max-width: 800px;
+    margin: 2rem auto;
+    border-collapse: collapse;
+    font-family: monospace;
+    font-size: 0.95rem;
+}
+
+.detail-table tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+.detail-table td {
+    padding: 0.4rem 0.75rem;
+    vertical-align: top;
+}
+
+.detail-table .key {
+    font-weight: bold;
+    color: #333;
+    background-color: #fafafa;
+    border-right: 1px solid #ccc;
+    width: 30%;
+}
+
+.detail-table .value {
+    color: #555;
+}
