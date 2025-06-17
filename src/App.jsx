@@ -39,7 +39,15 @@ function useFilterMode() {
     return useContext(FilterContext);
 }
 
-function PropertyConstraints({ required, minLength, maxLength, minValue, maxValue, pattern, allowedValues }) {
+function PropertyConstraints({
+                                 required,
+                                 minLength, maxLength,
+                                 minValue, maxValue,
+                                 exclusiveMinValue, exclusiveMaxValue,
+                                 pattern,
+                                 allowedValues,
+                                 geometryTypes
+                            }) {
     return (
         <div>
             <p>{required ? "Required: Yes" : "Optional: Yes"}</p>
@@ -57,15 +65,27 @@ function PropertyConstraints({ required, minLength, maxLength, minValue, maxValu
             )}
 
             {minValue !== undefined && maxValue !== undefined && (
-                <p>Allowed Values: <code>{minValue}..{maxValue}</code></p>
+                <p>Allowed Values: <code>[{minValue}..{maxValue}] (inclusive range)</code></p>
             )}
 
             {minValue !== undefined && maxValue === undefined && (
-                <p>Allowed Values: Minimum <code>{minValue}</code></p>
+                <p>Allowed Values: <code>&ge; {minValue}</code></p>
             )}
 
             {minValue === undefined && maxValue !== undefined && (
-                <p>Allowed Values: Maximum <code>{maxValue}</code></p>
+                <p>Allowed Values: <code>&le; {maxValue}</code></p>
+            )}
+
+            {exclusiveMinValue !== undefined && exclusiveMaxValue !== undefined && (
+                <p>Allowed Values: <code>({exclusiveMinValue}..{exclusiveMaxValue}) (exclusive range)</code></p>
+            )}
+
+            {exclusiveMinValue !== undefined && exclusiveMaxValue === undefined && (
+                <p>Allowed Values: <code>&gt; {exclusiveMinValue}</code></p>
+            )}
+
+            {exclusiveMinValue === undefined && exclusiveMaxValue !== undefined && (
+                <p>Allowed Values: <code>&lt; {exclusiveMaxValue}</code></p>
             )}
 
             {pattern !== undefined && (
@@ -79,6 +99,17 @@ function PropertyConstraints({ required, minLength, maxLength, minValue, maxValu
                             if (idx < allowedValues.length - 1) acc.push(', ');
                             return acc;
                         }, [])
+                }
+                </p>
+            )}
+
+            {geometryTypes !== undefined && (
+                <p>Geometry Type{geometryTypes.length > 1 ? "s" : ""}: {
+                    geometryTypes.reduce((acc, str, idx) => {
+                        acc.push(<code key={idx}>{str}</code>);
+                        if (idx < geometryTypes.length - 1) acc.push(', ');
+                        return acc;
+                    }, [])
                 }
                 </p>
             )}
@@ -113,6 +144,8 @@ function Items({ type, constraints }) {
     )
 }
 
+const builtinTypes = new Set(["array", "boolean", "float", "geometry", "integer", "string"]);
+
 // ------------- Property Component -------------
 function Property({ category, name, description, type, example, constraints, items }) {
     const { mode } = useFilterMode();
@@ -129,7 +162,9 @@ function Property({ category, name, description, type, example, constraints, ite
             <strong>{name}</strong>: {description}
 
             <div style={{ marginLeft: '2em' }}>
-                <p>Type: <code>{type}</code></p>
+                <p>Type: <code>
+                    {builtinTypes.has(type) ? type : <a href="nowhere">{type}</a>}
+                </code></p>
 
                 <PropertyConstraints {...constraints}/>
 
@@ -185,6 +220,13 @@ function App() {
                             />
                             <Property
                                 category="standard"
+                                name="geometry"
+                                description="Feature geometry"
+                                type="geometry"
+                                constraints={{ required: true, geometryTypes: ["Polygon", "MultiPolygon"]}}
+                            />
+                            <Property
+                                category="standard"
                                 name="version"
                                 description="Version number of the feature, incremented in each
                                              Overture release where the geometry or attributes of
@@ -206,14 +248,185 @@ function App() {
                                 items={{ type: "source", constraints: { minItems: 1, uniqueItems: true }}}
                             />
                             <Property
-                                category="specific"
-                                name="retryLimit"
-                                description="Maximum number of retry attempts."
+                                category="standard"
+                                name="names"
+                                description="Names by which the feature is called."
+                                type="names"
                             />
                             <Property
                                 category="specific"
-                                name="timeout"
-                                description="Timeout in seconds."
+                                name="subtype"
+                                description="A broad category of the building type/purpose. When the
+                                             current use of the building does not match the built purpose,
+                                             the subtype should be set to represent the current use of the
+                                             building."
+                                type="string"
+                                constraints={{ required: true, allowedValues: ["agricultural", "civic", "commercial", "education", "entertainment", "industrial", "medical", "military", "outbuilding", "religious", "residential", "service", "transportation"] }}
+                            />
+                            <Property
+                                category="specific"
+                                name="class"
+                                description="Further delineation of the building's built purpose."
+                                type="string"
+                                constraints={{
+                                    required: true,
+                                    allowedValues: [
+                                        "agricultural",
+                                        "allotment_house",
+                                        "apartments",
+                                        "barn",
+                                        "beach_hut",
+                                        "boathouse",
+                                        "bridge_structure",
+                                        "bungalow",
+                                        "bunker",
+                                        "cabin",
+                                        "carport",
+                                        "cathedral",
+                                        "chapel",
+                                        "church",
+                                        "civic",
+                                        "college",
+                                        "commercial",
+                                        "cowshed",
+                                        "detached",
+                                        "digester",
+                                        "dormitory",
+                                        "dwelling_house",
+                                        "factory",
+                                        "farm",
+                                        "farm_auxiliary",
+                                        "fire_station",
+                                        "garage",
+                                        "garages",
+                                        "ger",
+                                        "glasshouse",
+                                        "government",
+                                        "grandstand",
+                                        "greenhouse",
+                                        "guardhouse",
+                                        "hangar",
+                                        "hospital",
+                                        "hotel",
+                                        "house",
+                                        "houseboat",
+                                        "hut",
+                                        "industrial",
+                                        "kindergarten",
+                                        "kiosk",
+                                        "library",
+                                        "manufacture",
+                                        "military",
+                                        "monastery",
+                                        "mosque",
+                                        "office",
+                                        "outbuilding",
+                                        "parking",
+                                        "pavilion",
+                                        "post_office",
+                                        "presbytery",
+                                        "public",
+                                        "religious",
+                                        "residential",
+                                        "retail",
+                                        "roof",
+                                        "school",
+                                        "semi",
+                                        "semidetached_house",
+                                        "service",
+                                        "shed",
+                                        "shrine",
+                                        "silo",
+                                        "slurry_tank",
+                                        "sports_centre",
+                                        "sports_hall",
+                                        "stable",
+                                        "stadium",
+                                        "static_caravan",
+                                        "stilt_house",
+                                        "storage_tank",
+                                        "sty",
+                                        "supermarket",
+                                        "synagogue",
+                                        "temple",
+                                        "terrace",
+                                        "toilets",
+                                        "train_station",
+                                        "transformer_tower",
+                                        "transportation",
+                                        "trullo",
+                                        "university",
+                                        "warehouse",
+                                        "wayside_shrine"
+                                    ]
+                            }}
+                            />
+                            <Property
+                                category="specific"
+                                name="has_parts"
+                                description="Flag indicating whether the building has parts."
+                                type="boolean"
+                            />
+                            <Property
+                                category="specific"
+                                name="height"
+                                description="Height of the building or part in meters. The height is the
+                                             distance from the lowest point to the highest point."
+                                type="float"
+                                constraints={{ exclusiveMinValue: 0 }}
+                            />
+                            <Property
+                                category="specific"
+                                name="is_underground"
+                                description="Whether the entire building or part is completely below ground. This is
+                                             useful for rendering which typically omits these buildings or styles them
+                                             differently because they are not visible above ground. This is different
+                                             than the level column which is used to indicate z-ordering of elements and
+                                             negative values may be above ground."
+                                type="boolean"
+                            />
+                            <Property
+                                category="specific"
+                                name="num_floors"
+                                description="Number of above-ground floors of the building or part."
+                                type="integer"
+                                constraints={{ exclusiveMinValue: 0 }}
+                            />
+                            <Property
+                                category="specific"
+                                name="num_floors_underground"
+                                description="Number of below-ground floors of the building or part."
+                                type="integer"
+                                constraints={{ exclusiveMinValue: 0 }}
+                            />
+                            <Property
+                                category="specific"
+                                name="min_height"
+                                description="The height of the bottom part of building in meters. Used if a building or
+                                             part of building starts above the ground level."
+                                type="float"
+                                constraints={{ exclusiveMinValue: 0 }}
+                            />
+                            <Property
+                                category="specific"
+                                name="min_floor"
+                                description='The "start" floor of this building or part. Indicates that the building or
+                                             part is "floating" and its bottom-most floor is above ground level, usually
+                                             because it is part of a larger building in which some parts do reach down
+                                             to ground level. An example is a building that has an entry road or
+                                             driveway at ground level into an interior courtyard, where part of the
+                                             building bridges above the entry road. This property may sometimes be
+                                             populated when min_height is missing and in these cases can be used as a proxy
+                                             for min_height.'
+                                type="integer"
+                                constraints={{ exclusiveMinValue: 0 }}
+                            />
+                            <Property
+                                category="specific"
+                                name="facade_color"
+                                description='The color (name or color triplet) of the facade of a building or building part in hexadecimal.'
+                                type="string"
+                                constraints={{ pattern: "^(\w+|#[0-9a-f]{6})$"}}
                             />
                         </PropertyFilterToggle>
                     </div>
