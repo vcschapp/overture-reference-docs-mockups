@@ -1,6 +1,7 @@
 import { useState, createContext, useContext } from 'react';
 import './App.css';
 import { DerivedSchemas } from './DerivedSchemas.jsx';
+import { BuildingSampleGrid } from './BuildingSampleGrid.jsx';
 
 // ------------- Filter Context Setup -------------
 const FilterContext = createContext();
@@ -433,10 +434,15 @@ function App() {
                 </div>
 
                 <div>
-                    <h2 id="examples">Examples</h2>
+                    <h2 id="sample-data">Sample Data</h2>
 
                     OK an idea I have here is to put a small map non-scrollable static map in here with
                     polygons you can overlay.
+
+                    What I would like here is a "DB scrolling" UI with forward and backward buttons, data being
+                    shown in a two-column key/value pair table.
+
+                    <BuildingSampleGrid/>
                 </div>
 
                 <div>
@@ -529,7 +535,7 @@ function App() {
                     <li>
                         <ul>
                             <li><a href="#properties">Properties</a></li>
-                            <li><a href="#examples">Examples</a></li>
+                            <li><a href="#sample-data">Sample Data</a></li>
                             <li><a href="#schemas">Derived Schemas</a></li>
                             <li><a href="#extensions">Extensions</a></li>
                             <li>
