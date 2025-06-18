@@ -436,12 +436,6 @@ function App() {
                 <div>
                     <h2 id="sample-data">Sample Data</h2>
 
-                    OK an idea I have here is to put a small map non-scrollable static map in here with
-                    polygons you can overlay.
-
-                    What I would like here is a "DB scrolling" UI with forward and backward buttons, data being
-                    shown in a two-column key/value pair table.
-
                     <BuildingSampleGrid/>
                 </div>
 
